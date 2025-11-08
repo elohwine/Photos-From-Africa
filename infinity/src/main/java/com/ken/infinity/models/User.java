@@ -4,7 +4,8 @@ import java.util.List;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "user")
+// Renamed table from reserved keyword 'user' to 'users' to avoid PostgreSQL syntax errors
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
