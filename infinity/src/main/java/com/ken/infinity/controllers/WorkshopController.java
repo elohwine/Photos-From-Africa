@@ -77,7 +77,8 @@ public class WorkshopController {
             return "redirect:/login";
         }
         User user = userService.findByUserId(currentUserId);
-        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+        String originalName = multipartFile.getOriginalFilename();
+        String fileName = StringUtils.cleanPath(originalName != null ? originalName : ("workshop-" + System.currentTimeMillis()));
         workshop.setImgUrl(fileName);
 
         System.out.println("Current datetime " + localDatetime);
@@ -135,8 +136,8 @@ public class WorkshopController {
 
         //      start sending mail
 
-        String from = "nairobi.sen.42@gmail.com";
-        String to = user.getEmail();
+        String from = "noreply@infinity.example";
+        String to = user.getEmail() != null ? user.getEmail() : "noreply@infinity.example";
 
         SimpleMailMessage message = new SimpleMailMessage();
 

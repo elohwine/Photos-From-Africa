@@ -66,7 +66,8 @@ public class PhotoshootController {
             return "redirect:/login";
         }
 
-        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+        String originalName = multipartFile.getOriginalFilename();
+        String fileName = StringUtils.cleanPath(originalName != null ? originalName : ("photoshoot-" + System.currentTimeMillis()));
         photoshoot.setImgUrl(fileName);
 
         System.out.println("Current datetime " + localDatetime);
@@ -130,8 +131,8 @@ public class PhotoshootController {
 
         //      start sending mail
 
-        String from = "nairobi.sen.42@gmail.com";
-        String to = user.getEmail();
+        String from = "noreply@infinity.example";
+        String to = user.getEmail() != null ? user.getEmail() : "noreply@infinity.example";
 
         SimpleMailMessage message = new SimpleMailMessage();
 

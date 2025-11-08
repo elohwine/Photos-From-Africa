@@ -34,14 +34,20 @@ public class AddPhotoController {
         this.securityService = securityService;
     }
 
-    @GetMapping("/addPhoto")
-    public String addPhoto(Model model) {
-        model.addAttribute("photo", new Photo());
-        return "addPhoto";
+    @GetMapping("/addArt")
+    public String addArt(Model model) {
+        model.addAttribute("artwork", new Photo());
+        return "addArt";
     }
 
-    @PostMapping("/addPhoto")
-    public String addPhoto(@ModelAttribute("photo") Photo photo, Model model, @RequestParam("image") MultipartFile multipartFile) throws IOException {
+    // Backward compatibility: redirect old path to new one
+    @GetMapping("/addPhoto")
+    public String addPhotoRedirect() {
+        return "redirect:/addArt";
+    }
+
+    @PostMapping("/addArt")
+    public String addArt(@ModelAttribute("artwork") Photo photo, Model model, @RequestParam("image") MultipartFile multipartFile) throws IOException {
         model.addAttribute("loggedIn", securityService.isLoggedIn());
         int currentUserId;
         try {
@@ -52,11 +58,12 @@ public class AddPhotoController {
 
         User user = userService.findByUserId(currentUserId);
         System.out.println("current user id" + currentUserId);
-        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+        String originalName = multipartFile.getOriginalFilename();
+        String fileName = StringUtils.cleanPath(originalName != null ? originalName : ("upload-" + System.currentTimeMillis()));
         photo.setImgUrl(fileName);
         photoService.save(photo, user);
 
-        String uploadDir = "src/main/resources/static/img/photo-photos/" + photo.getId();
+        String uploadDir = "src/main/resources/static/img/artwork-photos/" + photo.getId();
 
         FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
 

@@ -21,14 +21,14 @@ public class PhotoServiceImpl implements PhotoService {
 
     @Override
     public void save(Photo photo, User user) {
-        System.out.println(user.getId());
         photo.setOwner(user);
         photo.setLikes(0);
         photo.setLabel("Verifying");
-        String imgUrl = "/img/photo-photos/" + photo.getId() + "/" + photo.getImgUrl();
-        photo.setImgUrl(imgUrl);
-        System.out.println(photo.getImgUrl());
-        photoRepository.save(photo);
+        // First save to obtain an ID
+        Photo saved = photoRepository.save(photo);
+        String finalImgUrl = "/img/artwork-photos/" + saved.getId() + "/" + saved.getImgUrl();
+        saved.setImgUrl(finalImgUrl);
+        photoRepository.save(saved);
     }
 
     @Override
