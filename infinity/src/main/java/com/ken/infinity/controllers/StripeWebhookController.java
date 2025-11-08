@@ -78,8 +78,8 @@ public class StripeWebhookController {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(from);
             message.setTo(to);
-            message.setSubject("Payment Confirmation - Infinity Photo Gallery");
-            message.setText("Dear " + user.getFirstName() + ",\n\n" + "Your payment for Order #" + order.getId() + " has been successfully processed.\n" + "Amount Paid: $" + order.getPrice() + "\n" + "Payment ID: " + order.getExternalPaymentId() + "\n\n" + "Your photos will be delivered shortly. Thank you for choosing Infinity Photo Gallery!\n\n" + "Best regards,\nInfinity Photo Gallery");
+            message.setSubject("Payment Confirmation - Photos For Africa");
+            message.setText("Dear " + user.getFirstName() + ",\n\n" + "Your payment for Order #" + order.getId() + " has been successfully processed.\n" + "Amount Paid: $" + order.getPrice() + "\n" + "Payment ID: " + order.getExternalPaymentId() + "\n\n" + "Your photos will be delivered shortly. Thank you for choosing Photos For Africa!\n\n" + "Best regards,\nPhotos For Africa");
 
             javaMailSender.send(message);
         }

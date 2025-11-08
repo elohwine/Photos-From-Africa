@@ -139,7 +139,7 @@ public class PhotoshootController {
         message.setFrom(from);
         message.setTo(to);
         message.setSubject("Seat Registered for Photoshoot");
-        message.setText("Hello " + user.getFirstName() + "! \n" + "You have successfully registered for the Photoshoot. " + "Hope to see you soon and have an amazing experience!" + "\n" + "\n" + "Sincerely, \n" + "Infinity Photo Gallery");
+        message.setText("Hello " + user.getFirstName() + "! \n" + "You have successfully registered for the Photoshoot. " + "Hope to see you soon and have an amazing experience!" + "\n" + "\n" + "Sincerely, \n" + "Photos For Africa");
 
         javaMailSender.send(message);
 

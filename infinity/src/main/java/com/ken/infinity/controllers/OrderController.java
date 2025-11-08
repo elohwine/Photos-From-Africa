@@ -68,8 +68,8 @@ public class OrderController {
 
         message.setFrom(from);
         message.setTo(to);
-        message.setSubject("Your order for Photo from Infinity Photo Gallery");
-        message.setText("Hello " + user.getFirstName() + "! \n" + "Thanks for your order #" + order.getId() + " placed on " + order.getOrdered_at() + " with Infinity Photo Gallery." + " One of the best photos from our gallery is headed your way! \n" + "\n" + "Your Order total is " + order.getPrice() + "$. " + "We accept payment via cheque/debit/credit card. Simply reply to this mail to let us know how you wish to pay. We will send you a mail for further proceedings. " + "If you wish to cancel the order, let us know via replying to this mail. The due date for the payment is upto 15 days after recieving this mail. After that we may have to cancel your order. \n" + "\n" + "We love your choice of this master piece! If you have any queries, just reply to this mail and we'll be right back to you!" + "\n" + "\n" + "Sincerely, \n" + "Infinity Photo Gallery");
+        message.setSubject("Your order from Photos For Africa");
+        message.setText("Hello " + user.getFirstName() + "! \n" + "Thanks for your order #" + order.getId() + " placed on " + order.getOrdered_at() + " with Photos For Africa." + " One of the best photos from our collection is headed your way! \n" + "\n" + "Your Order total is " + order.getPrice() + "$. " + "We accept payment via cheque/debit/credit card. Simply reply to this mail to let us know how you wish to pay. We will send you a mail for further proceedings. " + "If you wish to cancel the order, let us know via replying to this mail. The due date for the payment is up to 15 days after receiving this mail. After that we may have to cancel your order. \n" + "\n" + "We love your choice of this masterpiece! If you have any queries, just reply to this mail and we'll be right back to you!" + "\n" + "\n" + "Sincerely, \n" + "Photos For Africa");
 
         javaMailSender.send(message);
 
