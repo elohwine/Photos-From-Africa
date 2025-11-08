@@ -2,6 +2,10 @@ package com.ken.infinity.services;
 
 import com.ken.infinity.models.User;
 import com.ken.infinity.repository.UserRepository;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -10,14 +14,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-
     UserRepository userRepository;
 
     @Autowired
@@ -34,9 +32,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         grantList.add(authority);
 
         System.out.println(grantList);
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(), user.getPassword(), grantList
-        );
-
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), grantList);
     }
 }

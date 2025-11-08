@@ -5,15 +5,6 @@ import com.ken.infinity.services.SecurityService;
 import com.ken.infinity.services.UserService;
 import com.ken.infinity.services.WorkshopRegisterService;
 import com.ken.infinity.services.WorkshopService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -25,10 +16,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class WorkshopController {
-
     SecurityService securityService;
     UserService userService;
     WorkshopService workshopService;
@@ -46,10 +44,10 @@ public class WorkshopController {
     }
 
     @GetMapping("/workshop")
-    public String workshop(Model model){
+    public String workshop(Model model) {
         List<Workshop> workshops = workshopService.getWorkshops();
         Map<Object, String> workshopAndOrganizer = new HashMap<>();
-        for(Workshop workshop: workshops){
+        for (Workshop workshop : workshops) {
             workshopAndOrganizer.put(workshop, workshopService.getWorkshopOrganizerName(workshop));
         }
         model.addAttribute("workshops", workshops);
@@ -58,14 +56,13 @@ public class WorkshopController {
         return "workshop";
     }
 
-
     @GetMapping("/singleWorkshop")
-    public String singleWorkshop(){
+    public String singleWorkshop() {
         return "singleWorkshop";
     }
 
     @GetMapping("/organizeWorkshop")
-    public String organizeWorkshop(Model model){
+    public String organizeWorkshop(Model model) {
         model.addAttribute("workshop", new Workshop());
         return "organizeWorkshop";
     }
@@ -74,10 +71,9 @@ public class WorkshopController {
     public String organizeWorkshop(@ModelAttribute("workshop") Workshop workshop, Model model, @RequestParam("image") MultipartFile multipartFile, @RequestParam("localDatetime") String localDatetime) throws IOException {
         model.addAttribute("loggedIn", securityService.isLoggedIn());
         int currentUserId;
-        try{
+        try {
             currentUserId = userService.findByUsername(securityService.findLoggedInUsername()).getId();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return "redirect:/login";
         }
         User user = userService.findByUserId(currentUserId);
@@ -85,16 +81,14 @@ public class WorkshopController {
         workshop.setImgUrl(fileName);
 
         System.out.println("Current datetime " + localDatetime);
-        String datetimeTimestamp =localDatetime;
-        datetimeTimestamp+= ":00";
+        String datetimeTimestamp = localDatetime;
+        datetimeTimestamp += ":00";
 
         System.out.println(datetimeTimestamp);
 
-        workshop.setDatetime(Timestamp.valueOf(datetimeTimestamp.replace("T"," ")));
-
+        workshop.setDatetime(Timestamp.valueOf(datetimeTimestamp.replace("T", " ")));
 
         workshopService.save(workshop, user);
-
 
         String uploadDir = "src/main/resources/static/img/workshop-photos/" + workshop.getId();
 
@@ -104,7 +98,7 @@ public class WorkshopController {
     }
 
     @RequestMapping("/workshop/{workshopId}")
-    public String WorkshopById(Model model, @PathVariable("workshopId") int workshopId){
+    public String WorkshopById(Model model, @PathVariable("workshopId") int workshopId) {
         model.addAttribute("loggedIn", securityService.isLoggedIn());
         Map<String, Object> map = new HashMap<String, Object>();
         Workshop workshop = workshopService.findWorkshopById(workshopId);
@@ -113,26 +107,21 @@ public class WorkshopController {
         WorkshopRegister workshopRegister = new WorkshopRegister();
         model.addAttribute(workshopRegister);
 
-
         model.addAttribute("organizer", workshopService.getWorkshopOrganizerName(workshop));
         model.addAllAttributes(map);
 
-        if(securityService.isLoggedIn())
-
-            return "singleWorkshop";
+        if (securityService.isLoggedIn()) return "singleWorkshop";
         return "redirect:/login";
     }
 
-
     @RequestMapping(value = "/confirm", method = { RequestMethod.GET, RequestMethod.POST })
-    public String RegisterWorkshop(@ModelAttribute("workshopRegister")WorkshopRegister workshopRegister, @RequestParam("workshop_id") int workshop_id, Model model){
+    public String RegisterWorkshop(@ModelAttribute("workshopRegister") WorkshopRegister workshopRegister, @RequestParam("workshop_id") int workshop_id, Model model) {
         model.addAttribute("loggedIn", securityService.isLoggedIn());
 
         int currentUserId;
-        try{
+        try {
             currentUserId = userService.findByUsername(securityService.findLoggedInUsername()).getId();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return "redirect:/login";
         }
 
@@ -144,7 +133,7 @@ public class WorkshopController {
 
         workshopRegisterService.save(workshopRegister, user, workshop);
 
-//      start sending mail
+        //      start sending mail
 
         String from = "nairobi.sen.42@gmail.com";
         String to = user.getEmail();
@@ -154,30 +143,19 @@ public class WorkshopController {
         message.setFrom(from);
         message.setTo(to);
         message.setSubject("Seat Registered for Workshop");
-        message.setText("Hello " + user.getFirstName() + "! \n" +
-                "You have successfully registered for the Workshop. "+
-                "Hope to see you soon and have an amazing experience!" +
-                "\n" +
-                "\n" +
-                "Sincerely, \n" +
-                "Infinity Art Gallery");
+        message.setText("Hello " + user.getFirstName() + "! \n" + "You have successfully registered for the Workshop. " + "Hope to see you soon and have an amazing experience!" + "\n" + "\n" + "Sincerely, \n" + "Infinity Art Gallery");
 
         javaMailSender.send(message);
 
+        //        end sending mail
 
-//        end sending mail
-
-        if(securityService.isLoggedIn())
-            return "redirect:/workshop";
+        if (securityService.isLoggedIn()) return "redirect:/workshop";
         return "redirect:/login";
-
     }
 
-
-
     private class FileUploadUtil {
-        public static void saveFile(String uploadDir, String fileName,
-                                    MultipartFile multipartFile) throws IOException {
+
+        public static void saveFile(String uploadDir, String fileName, MultipartFile multipartFile) throws IOException {
             Path uploadPath = Paths.get(uploadDir);
 
             if (!Files.exists(uploadPath)) {
@@ -192,8 +170,5 @@ public class WorkshopController {
             }
         }
     }
-
-
 }
-
 //TODO: Create conditions like if the seats are full, user can't register and if they have already registered, they can't register again

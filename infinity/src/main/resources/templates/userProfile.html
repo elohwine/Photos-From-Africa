@@ -1,10 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - Infinity Photo Gallery</title>
+    <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
+    <div class="container mt-5">
+        <h1 class="mb-4">User Profile</h1>
+        <div th:if="${user != null}">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Personal Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> <span th:text="${user.firstName + ' ' + user.lastName}"></span></p>
+                    <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+                    <p><strong>Role:</strong> <span th:text="${user.role}"></span></p>
+                </div>
+            </div>
 
+            <div class="card">
+                <div class="card-header">
+                    <h5>Your Orders</h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${orders != null and !orders.empty}">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    <th>Payment Status</th>
+                                    <th>Payment Provider</th>
+                                    <th>Order Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="order : ${orders}">
+                                    <td th:text="${order.id}"></td>
+                                    <td th:text="'$' + ${order.price}"></td>
+                                    <td th:text="${order.status}"></td>
+                                    <td>
+                                        <span th:if="${order.paymentStatus == 'SUCCEEDED'}" class="badge bg-success">Paid</span>
+                                        <span th:if="${order.paymentStatus == 'FAILED'}" class="badge bg-danger">Failed</span>
+                                        <span th:if="${order.paymentStatus == null or order.paymentStatus == ''}" class="badge bg-warning">Pending</span>
+                                    </td>
+                                    <td th:text="${order.paymentProvider}"></td>
+                                    <td th:text="${order.orderDate}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div th:if="${orders == null or orders.empty}">
+                        <p>No orders found.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div th:if="${user == null}">
+            <p>User not found.</p>
+        </div>
+    </div>
+
+    <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

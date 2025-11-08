@@ -1,14 +1,23 @@
 package com.ken.infinity.models;
 
-import java.sql.Date;
 import java.sql.Timestamp;
+import javax.persistence.*;
 
+@Entity
+@Table(name = "workshop")
 public class Workshop {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String title;
     private String description;
     private String mode;
-    private int organizer_id;
+
+    @ManyToOne
+    @JoinColumn(name = "organizer_id")
+    private User organizer;
+
     private Timestamp datetime;
     private String venue;
     private int total_seats;
@@ -16,16 +25,14 @@ public class Workshop {
     private String imgUrl;
     private String status;
 
-    public Workshop() {
-    }
+    public Workshop() {}
 
-
-    public Workshop(int id, String title, String description, String mode, int organizer_id, Timestamp datetime, String venue, int total_seats, int registered_seats, String imgUrl, String status) {
+    public Workshop(int id, String title, String description, String mode, User organizer, Timestamp datetime, String venue, int total_seats, int registered_seats, String imgUrl, String status) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.mode = mode;
-        this.organizer_id = organizer_id;
+        this.organizer = organizer;
         this.datetime = datetime;
         this.venue = venue;
         this.total_seats = total_seats;
@@ -66,12 +73,23 @@ public class Workshop {
         this.mode = mode;
     }
 
+    public User getOrganizer() {
+        return organizer;
+    }
+
+    public void setOrganizer(User organizer) {
+        this.organizer = organizer;
+    }
+
     public int getOrganizer_id() {
-        return organizer_id;
+        return organizer != null ? organizer.getId() : 0;
     }
 
     public void setOrganizer_id(int organizer_id) {
-        this.organizer_id = organizer_id;
+        if (this.organizer == null) {
+            this.organizer = new User();
+        }
+        this.organizer.setId(organizer_id);
     }
 
     public Timestamp getDatetime() {
@@ -122,6 +140,3 @@ public class Workshop {
         this.status = status;
     }
 }
-
-
-//    create table workshop(id int not null auto_increment, title varchar(1000) not null, description varchar(5000) not null, mode varchar(225) not null, organizer_id int not null, datetime datetime not null, venue varchar(2000) not null, total_seats int not null, registered_seats int, imgUrl varchar(1000) not null, status varchar(225) not null, primary key (id), foreign key(organizer_id) references user(id));

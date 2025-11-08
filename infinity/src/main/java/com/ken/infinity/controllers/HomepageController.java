@@ -1,67 +1,62 @@
 package com.ken.infinity.controllers;
 
-import com.ken.infinity.models.Artwork;
+import com.ken.infinity.models.Photo;
 import com.ken.infinity.models.Workshop;
-import com.ken.infinity.repository.ArtworkRepository;
-import com.ken.infinity.services.ArtworkService;
+import com.ken.infinity.repository.PhotoRepository;
+import com.ken.infinity.services.PhotoService;
 import com.ken.infinity.services.WorkshopService;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @Controller
 public class HomepageController {
-
-    ArtworkRepository artworkRepository;
-    ArtworkService artworkService;
+    PhotoRepository photoRepository;
+    PhotoService photoService;
     WorkshopService workshopService;
 
     @Autowired
-    public HomepageController(ArtworkRepository artworkRepository, ArtworkService artworkService, WorkshopService workshopService) {
-        this.artworkRepository = artworkRepository;
-        this.artworkService = artworkService;
+    public HomepageController(PhotoRepository photoRepository, PhotoService photoService, WorkshopService workshopService) {
+        this.photoRepository = photoRepository;
+        this.photoService = photoService;
         this.workshopService = workshopService;
     }
 
-    @RequestMapping({"/", "/homepage"})
-    public String homepage(Model model){
-        List<Artwork> artworks = artworkRepository.getArtworks();
-        List<Artwork> featured = artworks.subList(artworks.size()-6, artworks.size());
+    @RequestMapping({ "/", "/homepage" })
+    public String homepage(Model model) {
+        List<Photo> photos = photoRepository.findAll();
+        List<Photo> featured = photos.subList(Math.max(0, photos.size() - 6), photos.size());
 
+        Map<Object, String> photoAndOwner = new HashMap<Object, String>();
 
-        Map<Object, String> artAndOwner = new HashMap<Object, String>();
-
-        for(Artwork artwork: featured){
-            artAndOwner.put(artwork, artworkService.getArtOwnerName(artwork));
+        for (Photo photo : featured) {
+            photoAndOwner.put(photo, photoService.getPhotoOwnerName(photo));
         }
 
         System.out.println("In home controller : " + featured);
 
-        model.addAttribute("artworks", featured);
-        model.addAttribute("artAndOwner", artAndOwner);
+        model.addAttribute("photos", featured);
+        model.addAttribute("photoAndOwner", photoAndOwner);
         System.out.println(model);
 
         List<Workshop> workshops = workshopService.getWorkshops();
         Map<Object, String> workshopAndOrganizer = new HashMap<>();
-        for(Workshop workshop: workshops){
+        for (Workshop workshop : workshops) {
             workshopAndOrganizer.put(workshop, workshopService.getWorkshopOrganizerName(workshop));
         }
         model.addAttribute("workshops", workshops);
         model.addAttribute("workshopAndOrganizer", workshopAndOrganizer);
 
-
         return "homepage";
     }
 
     @GetMapping("/about")
-    public String about(){
+    public String about() {
         return "about";
     }
-
 }

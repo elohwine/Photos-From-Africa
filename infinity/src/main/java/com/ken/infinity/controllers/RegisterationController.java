@@ -2,6 +2,7 @@ package com.ken.infinity.controllers;
 
 import com.ken.infinity.models.User;
 import com.ken.infinity.services.UserService;
+import javax.naming.Binding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.concurrent.DelegatingSecurityContextExecutorService;
 import org.springframework.stereotype.Controller;
@@ -13,11 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.naming.Binding;
-
 @Controller
 public class RegisterationController {
-
     private UserService userService;
 
     @Autowired
@@ -25,7 +23,7 @@ public class RegisterationController {
         this.userService = userService;
     }
 
-    @GetMapping({"/register"})
+    @GetMapping({ "/register" })
     public String register(Model model) {
         model.addAttribute("user", new User());
         return "register";
@@ -38,7 +36,7 @@ public class RegisterationController {
         return "register";
     }
 
-    @PostMapping({"/register"})
+    @PostMapping({ "/register" })
     public String register(@ModelAttribute("user") User user, BindingResult result, WebRequest request, Model model, RedirectAttributes attributes) {
         if (userService.userExists(user.getEmail())) {
             return "redirect:/registerError";
@@ -47,5 +45,4 @@ public class RegisterationController {
         System.out.println(user);
         return "login";
     }
-
 }

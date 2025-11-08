@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Pay with Card - Infinity Photo Gallery</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://js.stripe.com/v3/"></script>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <style>
+        .payment-card { max-width: 500px; margin: 2rem auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 10px; }
+        .card-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px 10px 0 0; }
+        #card-element { padding: 12px; border: 1px solid #ccc; border-radius: 6px; }
+        .spinner-border-sm { width: 1rem; height: 1rem; }
+        .alert { margin-top: 1rem; }
+        .order-summary { background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container">
+    <div class="card payment-card">
+        <div class="card-header text-center">
+            <h4 class="mb-0">Secure Payment</h4>
+            <small>Powered by Stripe</small>
+        </div>
+        <div class="card-body">
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <strong>Error:</strong> <span th:text="${error}"></span>
+            </div>
+
+            <div class="order-summary">
+                <h5>Order Summary</h5>
+                <p><strong>Order ID:</strong> <span th:text="${orderId}"></span></p>
+                <p><strong>Amount:</strong> $<span th:text="${amount / 100}"></span> (<span th:text="${currency}"></span>)</p>
+            </div>
+
+            <form id="payment-form">
+                <div class="mb-3">
+                    <label for="card-element" class="form-label">Card Details</label>
+                    <div id="card-element" class="form-control"></div>
+                    <div id="card-errors" class="text-danger mt-1" role="alert"></div>
+                </div>
+                <button id="payBtn" type="button" class="btn btn-primary w-100">
+                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    Pay $<span th:text="${amount / 100}"></span>
+                </button>
+            </form>
+
+            <div id="msg" class="alert d-none mt-3" role="alert"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="paymentToast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="toastMessage"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+  const stripe = Stripe(window.STRIPE_PUBLISHABLE_KEY || 'pk_test_placeholder');
+  const elements = stripe.elements();
+  const card = elements.create('card', { style: { base: { fontSize: '16px' } } });
+  card.mount('#card-element');
+
+  const amount = /*[[${amount}]]*/ 0;
+  const currency = '/*[[${currency}]]*/'.replaceAll('\u0027','');
+  const orderId = /*[[${orderId}]]*/ 0;
+  const payBtn = document.getElementById('payBtn');
+  const msgDiv = document.getElementById('msg');
+  const spinner = payBtn.querySelector('.spinner-border');
+
+  card.on('change', (event) => {
+    const displayError = document.getElementById('card-errors');
+    if (event.error) {
+      displayError.textContent = event.error.message;
+    } else {
+      displayError.textContent = '';
+    }
+  });
+
+  async function createPaymentIntent() {
+    const resp = await fetch('/api/payments/create-payment-intent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount, currency, orderId: String(orderId) })
+    });
+    if (!resp.ok) throw new Error('Failed to create payment intent');
+    return resp.json();
+  }
+
+  payBtn.addEventListener('click', async () => {
+    payBtn.disabled = true;
+    spinner.classList.remove('d-none');
+    msgDiv.classList.add('d-none');
+    try {
+      const { clientSecret } = await createPaymentIntent();
+      const result = await stripe.confirmCardPayment(clientSecret, { payment_method: { card } });
+      if (result.error) {
+        showMessage('Payment failed: ' + result.error.message, 'danger');
+      } else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
+        showMessage('Payment successful! Redirecting...', 'success');
+        setTimeout(() => window.location.href = '/payments/success?orderId=' + orderId, 2000);
+      } else {
+        showMessage('Payment status: ' + (result.paymentIntent && result.paymentIntent.status), 'warning');
+      }
+    } catch (e) {
+      showMessage('Error: ' + e.message, 'danger');
+    } finally {
+      payBtn.disabled = false;
+      spinner.classList.add('d-none');
+    }
+  });
+
+  function showMessage(message, type) {
+    msgDiv.className = `alert alert-${type}`;
+    msgDiv.textContent = message;
+    msgDiv.classList.remove('d-none');
+
+    // Also show toast
+    const toastEl = document.getElementById('paymentToast');
+    const toastBody = document.getElementById('toastMessage');
+    toastBody.textContent = message;
+    toastEl.className = `toast align-items-center text-white bg-${type} border-0`;
+    const toast = new bootstrap.Toast(toastEl, { autohide: true, delay: 5000 });
+    toast.show();
+  }
+</script>
+</body>
+</html>

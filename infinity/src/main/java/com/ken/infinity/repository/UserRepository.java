@@ -1,12 +1,11 @@
 package com.ken.infinity.repository;
 
 import com.ken.infinity.models.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UserRepository {
-    public User findByEmail(String email);
-    public boolean userExists(String email);
-    public void save(User user);
-    public User findByUserId(int id);
-
-
+@Repository
+public interface UserRepository extends JpaRepository<User, Integer> {
+    User findByEmail(String email);
+    boolean existsByEmail(String email);
 }

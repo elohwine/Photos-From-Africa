@@ -2,7 +2,6 @@ package com.ken.infinity.services;
 
 import com.ken.infinity.models.User;
 import com.ken.infinity.models.Workshop;
-
 import java.util.List;
 
 public interface WorkshopService {

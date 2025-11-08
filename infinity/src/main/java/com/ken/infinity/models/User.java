@@ -1,8 +1,15 @@
 package com.ken.infinity.models;
 
-public class User {
+import java.util.List;
+import javax.persistence.*;
 
+@Entity
+@Table(name = "user")
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String firstName;
     private String lastName;
     private String email;
@@ -11,9 +18,13 @@ public class User {
     private String address;
     private String role;
 
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    private List<Photo> photos;
 
-    public User() {
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Order> orders;
+
+    public User() {}
 
     public User(int id, String firstName, String lastName, String email, String phoneNo, String password, String address, String role) {
         this.id = id;
@@ -88,5 +99,21 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<Photo> getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(List<Photo> photos) {
+        this.photos = photos;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
     }
 }

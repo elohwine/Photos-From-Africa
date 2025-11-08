@@ -1,19 +1,31 @@
 package com.ken.infinity.models;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "workshop_register")
 public class WorkshopRegister {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String confirm;
-    private int user_id;
-    private int workshop_id;
 
-    public WorkshopRegister() {
-    }
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    public WorkshopRegister(int id, String confirm, int user_id, int workshop_id) {
+    @ManyToOne
+    @JoinColumn(name = "workshop_id")
+    private Workshop workshop;
+
+    public WorkshopRegister() {}
+
+    public WorkshopRegister(int id, String confirm, User user, Workshop workshop) {
         this.id = id;
         this.confirm = confirm;
-        this.user_id = user_id;
-        this.workshop_id = workshop_id;
+        this.user = user;
+        this.workshop = workshop;
     }
 
     public int getId() {
@@ -32,21 +44,41 @@ public class WorkshopRegister {
         this.confirm = confirm;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Workshop getWorkshop() {
+        return workshop;
+    }
+
+    public void setWorkshop(Workshop workshop) {
+        this.workshop = workshop;
+    }
+
     public int getUser_id() {
-        return user_id;
+        return user != null ? user.getId() : 0;
     }
 
     public void setUser_id(int user_id) {
-        this.user_id = user_id;
+        if (this.user == null) {
+            this.user = new User();
+        }
+        this.user.setId(user_id);
     }
 
     public int getWorkshop_id() {
-        return workshop_id;
+        return workshop != null ? workshop.getId() : 0;
     }
 
     public void setWorkshop_id(int workshop_id) {
-        this.workshop_id = workshop_id;
+        if (this.workshop == null) {
+            this.workshop = new Workshop();
+        }
+        this.workshop.setId(workshop_id);
     }
 }
-
-

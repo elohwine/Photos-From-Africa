@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Payment Successful - Infinity Photo Gallery</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <style>
+        .success-card { max-width: 600px; margin: 2rem auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 10px; }
+        .card-header { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border-radius: 10px 10px 0 0; }
+        .checkmark { font-size: 4rem; color: #28a745; }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container">
+    <div class="card success-card">
+        <div class="card-header text-center">
+            <h4 class="mb-0">Payment Successful!</h4>
+        </div>
+        <div class="card-body text-center">
+            <div class="checkmark mb-3">✓</div>
+            <h5>Thank you for your payment</h5>
+            <p>Your order has been processed successfully.</p>
+
+            <div class="order-summary bg-light p-3 rounded mb-4">
+                <h6>Order Details</h6>
+                <p><strong>Order ID:</strong> <span th:text="${orderId}"></span></p>
+                <p><strong>Amount Paid:</strong> $<span th:text="${amount / 100}"></span> (<span th:text="${currency}"></span>)</p>
+                <p><strong>Status:</strong> <span class="badge bg-success">Paid</span></p>
+            </div>
+
+            <div class="alert alert-info" role="alert">
+                <strong>Next Steps:</strong> You will receive an email confirmation shortly. Your photos will be delivered as per our terms.
+            </div>
+
+            <a href="/homepage" class="btn btn-primary">Continue Shopping</a>
+            <a href="/userProfile" class="btn btn-outline-secondary ms-2">View Profile</a>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Payment completed successfully! Check your email for confirmation.
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Show toast on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        var toastEl = document.getElementById('successToast');
+        var toast = new bootstrap.Toast(toastEl, { autohide: true, delay: 5000 });
+        toast.show();
+    });
+</script>
+</body>
+</html>

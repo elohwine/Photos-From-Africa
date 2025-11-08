@@ -1,161 +1,156 @@
 package com.ken.infinity.controllers;
 
-import com.ken.infinity.models.Artwork;
-import com.ken.infinity.models.Orders;
-import com.ken.infinity.repository.ArtworkRepository;
-import com.ken.infinity.services.ArtworkService;
-import com.ken.infinity.services.OrdersService;
+import com.ken.infinity.models.Order;
+import com.ken.infinity.models.Photo;
+import com.ken.infinity.repository.PhotoRepository;
+import com.ken.infinity.services.OrderService;
+import com.ken.infinity.services.PhotoService;
 import com.ken.infinity.services.SecurityService;
 import com.ken.infinity.services.UserService;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @Controller
 public class ShopController {
-
     UserService userService;
-    ArtworkRepository artworkRepository;
-    ArtworkService artworkService;
+    PhotoRepository photoRepository;
+    PhotoService photoService;
     SecurityService securityService;
-    OrdersService ordersService;
+    OrderService orderService;
 
     @Autowired
-    public ShopController(UserService userService, ArtworkRepository artworkRepository, ArtworkService artworkService, SecurityService securityService, OrdersService ordersService) {
+    public ShopController(UserService userService, PhotoRepository photoRepository, PhotoService photoService, SecurityService securityService, OrderService orderService) {
         this.userService = userService;
-        this.artworkRepository = artworkRepository;
-        this.artworkService = artworkService;
+        this.photoRepository = photoRepository;
+        this.photoService = photoService;
         this.securityService = securityService;
-        this.ordersService = ordersService;
+        this.orderService = orderService;
     }
 
-    @GetMapping({"/shop"})
-    public String shop(Model model){
-        List<Artwork> artworks = artworkRepository.getArtworks();
+    @GetMapping({ "/shop" })
+    public String shop(Model model) {
+        List<Photo> photos = photoRepository.findAll();
 
-        Map<Object, String> artAndOwner = new HashMap<Object, String>();
-        for(Artwork artwork: artworks){
-            artAndOwner.put(artwork, artworkService.getArtOwnerName(artwork));
+        Map<Object, String> photoAndOwner = new HashMap<Object, String>();
+        for (Photo photo : photos) {
+            photoAndOwner.put(photo, photoService.getPhotoOwnerName(photo));
         }
 
-        System.out.println("In controller : " + artworks);
+        System.out.println("In controller : " + photos);
 
-        model.addAttribute("artworks", artworks);
-        model.addAttribute("artAndOwner", artAndOwner);
+        model.addAttribute("photos", photos);
+        model.addAttribute("photoAndOwner", photoAndOwner);
         System.out.println(model);
 
         return "shop";
     }
 
     @GetMapping("/hatching")
-    public String hatching(Model model){
-        List<Artwork> artworks = artworkRepository.getArtworks();
+    public String hatching(Model model) {
+        List<Photo> photos = photoRepository.findByCategory("hatching");
 
-        Map<Object, String> artAndOwner = new HashMap<Object, String>();
-        for(Artwork artwork: artworks){
-            artAndOwner.put(artwork, artworkService.getArtOwnerName(artwork));
+        Map<Object, String> photoAndOwner = new HashMap<Object, String>();
+        for (Photo photo : photos) {
+            photoAndOwner.put(photo, photoService.getPhotoOwnerName(photo));
         }
 
-        System.out.println("In controller : " + artworks);
+        System.out.println("In controller : " + photos);
 
-        model.addAttribute("artworks", artworks);
-        model.addAttribute("artAndOwner", artAndOwner);
+        model.addAttribute("photos", photos);
+        model.addAttribute("photoAndOwner", photoAndOwner);
         System.out.println(model);
 
         return "hatching";
     }
 
     @GetMapping("/watercolorPainting")
-    public String watercolorPainting(Model model){
-        List<Artwork> artworks = artworkRepository.getArtworks();
+    public String watercolorPainting(Model model) {
+        List<Photo> photos = photoRepository.findByCategory("watercolor");
 
-        Map<Object, String> artAndOwner = new HashMap<Object, String>();
-        for(Artwork artwork: artworks){
-            artAndOwner.put(artwork, artworkService.getArtOwnerName(artwork));
+        Map<Object, String> photoAndOwner = new HashMap<Object, String>();
+        for (Photo photo : photos) {
+            photoAndOwner.put(photo, photoService.getPhotoOwnerName(photo));
         }
 
-        System.out.println("In controller : " + artworks);
+        System.out.println("In controller : " + photos);
 
-        model.addAttribute("artworks", artworks);
-        model.addAttribute("artAndOwner", artAndOwner);
+        model.addAttribute("photos", photos);
+        model.addAttribute("photoAndOwner", photoAndOwner);
         System.out.println(model);
 
         return "watercolorPainting";
     }
 
     @GetMapping("/oilPainting")
-    public String oilPainting(Model model){
-        List<Artwork> artworks = artworkRepository.getArtworks();
+    public String oilPainting(Model model) {
+        List<Photo> photos = photoRepository.findByCategory("oil");
 
-        Map<Object, String> artAndOwner = new HashMap<Object, String>();
-        for(Artwork artwork: artworks){
-            artAndOwner.put(artwork, artworkService.getArtOwnerName(artwork));
+        Map<Object, String> photoAndOwner = new HashMap<Object, String>();
+        for (Photo photo : photos) {
+            photoAndOwner.put(photo, photoService.getPhotoOwnerName(photo));
         }
 
-        System.out.println("In controller : " + artworks);
+        System.out.println("In controller : " + photos);
 
-        model.addAttribute("artworks", artworks);
-        model.addAttribute("artAndOwner", artAndOwner);
+        model.addAttribute("photos", photos);
+        model.addAttribute("photoAndOwner", photoAndOwner);
         System.out.println(model);
 
         return "oilPainting";
     }
 
+    @GetMapping("/receivedPhotos")
+    public String receivedPhotos(Model model) {
+        List<Photo> photos = photoRepository.findByLabel("Verifying");
 
-    @GetMapping("/receivedArtworks")
-    public String receivedArtworks(Model model){
-        List<Artwork> artworks = artworkRepository.getArtworks();
-
-        Map<Object, String> artAndOwner = new HashMap<Object, String>();
-        for(Artwork artwork: artworks){
-            artAndOwner.put(artwork, artworkService.getArtOwnerName(artwork));
+        Map<Object, String> photoAndOwner = new HashMap<Object, String>();
+        for (Photo photo : photos) {
+            photoAndOwner.put(photo, photoService.getPhotoOwnerName(photo));
         }
 
-        System.out.println("In controller : " + artworks);
+        System.out.println("In controller : " + photos);
 
-        model.addAttribute("artworks", artworks);
-        model.addAttribute("artAndOwner", artAndOwner);
+        model.addAttribute("photos", photos);
+        model.addAttribute("photoAndOwner", photoAndOwner);
         System.out.println(model);
 
-        return "receivedArtworks";
+        return "receivedPhotos";
     }
 
-    @RequestMapping(value = "/acceptArt", method = { RequestMethod.GET, RequestMethod.POST })
-    public String acceptArt(Model model,  @RequestParam("artwork_id") int artwork_id){
-
-        artworkRepository.acceptArt(artwork_id);
-        return "redirect:/receivedArtworks";
+    @RequestMapping(value = "/acceptPhoto", method = { RequestMethod.GET, RequestMethod.POST })
+    public String acceptPhoto(Model model, @RequestParam("photo_id") int photo_id) {
+        Photo photo = photoRepository.findById(photo_id).orElse(null);
+        if (photo != null) {
+            photo.setLabel("Unsold");
+            photoRepository.save(photo);
+        }
+        return "redirect:/receivedPhotos";
     }
 
-    @RequestMapping(value = "/declineArt", method = {RequestMethod.GET, RequestMethod.POST})
-    public String declineArt(Model model, @RequestParam("artwork_id") int artwork_id){
-        artworkRepository.declineArt(artwork_id);
-        return "redirect:/receivedArtworks";
-
+    @RequestMapping(value = "/declinePhoto", method = { RequestMethod.GET, RequestMethod.POST })
+    public String declinePhoto(Model model, @RequestParam("photo_id") int photo_id) {
+        photoRepository.deleteById(photo_id);
+        return "redirect:/receivedPhotos";
     }
 
-    @RequestMapping(value = "/shop/{artId}", method = { RequestMethod.GET, RequestMethod.POST })
-    public String ArtworkById(Model model, @PathVariable("artId") int artworkId){
+    @RequestMapping(value = "/shop/{photoId}", method = { RequestMethod.GET, RequestMethod.POST })
+    public String PhotoById(Model model, @PathVariable("photoId") int photoId) {
         model.addAttribute("loggedIn", securityService.isLoggedIn());
         Map<String, Object> map = new HashMap<String, Object>();
-        Orders orders = new Orders();
-        model.addAttribute(orders);
-        Artwork artwork = artworkService.findArtworkById(artworkId);
-        map.put("artwork",artwork);
-        model.addAttribute("owner", artworkService.getArtOwnerName(artwork));
+        Order order = new Order();
+        model.addAttribute(order);
+        Photo photo = photoService.findPhotoById(photoId);
+        map.put("photo", photo);
+        model.addAttribute("owner", photoService.getPhotoOwnerName(photo));
         model.addAllAttributes(map);
 
-        artworkService.updateArtworkLikes(artworkId, artwork.getLikes());
+        photoService.updatePhotoLikes(photoId, photo.getLikes());
 
-        if(securityService.isLoggedIn())
-            return "singleArt";
-        else return "login";
+        if (securityService.isLoggedIn()) return "singlePhoto"; else return "login";
     }
-
-
 }

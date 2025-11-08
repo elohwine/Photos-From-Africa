@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SecurityServiceImpl implements SecurityService {
-
     private AuthenticationManager authenticationManager;
     private UserDetailsServiceImpl userDetailsService;
 
@@ -21,18 +20,17 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public boolean isLoggedIn() {
-        if(findLoggedInUsername()==null) System.out.println("not logged in ");
-        else System.out.println("logged in!");
-        if(findLoggedInUsername()==null) return false;
+        if (findLoggedInUsername() == null) System.out.println("not logged in "); else System.out.println("logged in!");
+        if (findLoggedInUsername() == null) return false;
         return true;
     }
 
     @Override
     public String findLoggedInUsername() {
-        if(SecurityContextHolder.getContext().getAuthentication() == null) return  null;
+        if (SecurityContextHolder.getContext().getAuthentication() == null) return null;
         Object userDetails = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(userDetails instanceof UserDetails) {
-            return ((UserDetails)userDetails).getUsername();
+        if (userDetails instanceof UserDetails) {
+            return ((UserDetails) userDetails).getUsername();
         }
         return null;
     }
@@ -40,10 +38,7 @@ public class SecurityServiceImpl implements SecurityService {
     @Override
     public void autoLogin(String username, String password) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                userDetails,password,userDetails.getAuthorities()
-        );
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
         authenticationManager.authenticate(usernamePasswordAuthenticationToken);
     }
-
 }
