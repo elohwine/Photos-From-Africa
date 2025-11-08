@@ -1,5 +1,5 @@
-# Use official OpenJDK 11 runtime as base image
-FROM openjdk:11-jdk-slim
+# Use Eclipse Temurin OpenJDK 11 runtime as base image
+FROM eclipse-temurin:11-jdk
 
 # Set working directory
 WORKDIR /app
