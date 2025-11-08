@@ -153,7 +153,7 @@ public class WorkshopController {
         return "redirect:/login";
     }
 
-    private class FileUploadUtil {
+    private static class FileUploadUtil {
 
         public static void saveFile(String uploadDir, String fileName, MultipartFile multipartFile) throws IOException {
             Path uploadPath = Paths.get(uploadDir);
