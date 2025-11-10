@@ -61,8 +61,9 @@ public class ShopController {
 
         System.out.println("In controller : " + photos);
 
-        model.addAttribute("photos", photos);
-        model.addAttribute("photoAndOwner", photoAndOwner);
+        // Template expects "artworks" and "artAndOwner" attributes
+        model.addAttribute("artworks", photos);
+        model.addAttribute("artAndOwner", photoAndOwner);
         System.out.println(model);
 
         return "hatching";
@@ -79,8 +80,9 @@ public class ShopController {
 
         System.out.println("In controller : " + photos);
 
-        model.addAttribute("photos", photos);
-        model.addAttribute("photoAndOwner", photoAndOwner);
+        // Template expects "artworks" and "artAndOwner" attributes
+        model.addAttribute("artworks", photos);
+        model.addAttribute("artAndOwner", photoAndOwner);
         System.out.println(model);
 
         return "watercolorPainting";
@@ -97,8 +99,9 @@ public class ShopController {
 
         System.out.println("In controller : " + photos);
 
-        model.addAttribute("photos", photos);
-        model.addAttribute("photoAndOwner", photoAndOwner);
+        // Template expects "artworks" and "artAndOwner" attributes
+        model.addAttribute("artworks", photos);
+        model.addAttribute("artAndOwner", photoAndOwner);
         System.out.println(model);
 
         return "oilPainting";
@@ -115,11 +118,12 @@ public class ShopController {
 
         System.out.println("In controller : " + photos);
 
-        model.addAttribute("photos", photos);
-        model.addAttribute("photoAndOwner", photoAndOwner);
+        // Template expects "artworks" and "artAndOwner" attributes
+        model.addAttribute("artworks", photos);
+        model.addAttribute("artAndOwner", photoAndOwner);
         System.out.println(model);
 
-        return "receivedPhotos";
+        return "receivedArtworks";
     }
 
     @RequestMapping(value = "/acceptPhoto", method = { RequestMethod.GET, RequestMethod.POST })
@@ -140,17 +144,27 @@ public class ShopController {
 
     @RequestMapping(value = "/shop/{photoId}", method = { RequestMethod.GET, RequestMethod.POST })
     public String PhotoById(Model model, @PathVariable("photoId") int photoId) {
+        // Expose login state for template conditional rendering (not required to view)
         model.addAttribute("loggedIn", securityService.isLoggedIn());
-        Map<String, Object> map = new HashMap<String, Object>();
-        Order order = new Order();
-        model.addAttribute(order);
+    Map<String, Object> map = new HashMap<String, Object>();
+    // Provide an Order model attribute for the order form binding
+    model.addAttribute("order", new Order());
+
         Photo photo = photoService.findPhotoById(photoId);
-        map.put("photo", photo);
+        if (photo == null) {
+            // Photo not found: show error page for now
+            return "error";
+        }
+
+    // Template expects attribute name "artwork"
+        map.put("artwork", photo);
         model.addAttribute("owner", photoService.getPhotoOwnerName(photo));
         model.addAllAttributes(map);
 
+        // Update likes without risking NPE
         photoService.updatePhotoLikes(photoId, photo.getLikes());
 
-        if (securityService.isLoggedIn()) return "singlePhoto"; else return "login";
+        // Viewing a single artwork should be public; don't force login here
+        return "singleArt";
     }
 }

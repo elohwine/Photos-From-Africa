@@ -40,8 +40,9 @@ public class HomepageController {
 
         System.out.println("In home controller : " + featured);
 
-        model.addAttribute("photos", featured);
-        model.addAttribute("photoAndOwner", photoAndOwner);
+        // Homepage template expects "artworks" and "artAndOwner" attributes
+        model.addAttribute("artworks", featured);
+        model.addAttribute("artAndOwner", photoAndOwner);
         System.out.println(model);
 
         List<Workshop> workshops = workshopService.getWorkshops();

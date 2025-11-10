@@ -30,7 +30,8 @@
 
             <div class="order-summary">
                 <h5>Order Summary</h5>
-                <p><strong>Order ID:</strong> <span th:text="${orderId}"></span></p>
+                <p th:if="${orderId}"><strong>Order ID:</strong> <span th:text="${orderId}"></span></p>
+                <p th:if="${photoTitle}"><strong>Photo:</strong> <span th:text="${photoTitle}"></span></p>
                 <p><strong>Amount:</strong> $<span th:text="${amount / 100}"></span> (<span th:text="${currency}"></span>)</p>
             </div>
 
@@ -71,6 +72,9 @@
   const amount = /*[[${amount}]]*/ 0;
   const currency = '/*[[${currency}]]*/'.replaceAll('\u0027','');
   const orderId = /*[[${orderId}]]*/ 0;
+  const photoId = /*[[${photoId}]]*/ 0;
+  const email = '/*[[${email}]]*/'.replaceAll('\u0027','');
+  const address = '/*[[${address}]]*/'.replaceAll('\u0027','');
   const payBtn = document.getElementById('payBtn');
   const msgDiv = document.getElementById('msg');
   const spinner = payBtn.querySelector('.spinner-border');
@@ -85,10 +89,11 @@
   });
 
   async function createPaymentIntent() {
+    const metadata = orderId ? { orderId: String(orderId) } : { photoId: String(photoId), email, address };
     const resp = await fetch('/api/payments/create-payment-intent', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount, currency, orderId: String(orderId) })
+      body: JSON.stringify({ amount, currency, metadata })
     });
     if (!resp.ok) throw new Error('Failed to create payment intent');
     return resp.json();
@@ -99,13 +104,16 @@
     spinner.classList.remove('d-none');
     msgDiv.classList.add('d-none');
     try {
-      const { clientSecret } = await createPaymentIntent();
+      const { clientSecret, paymentIntentId } = await createPaymentIntent();
       const result = await stripe.confirmCardPayment(clientSecret, { payment_method: { card } });
       if (result.error) {
         showMessage('Payment failed: ' + result.error.message, 'danger');
       } else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
         showMessage('Payment successful! Redirecting...', 'success');
-        setTimeout(() => window.location.href = '/payments/success?orderId=' + orderId, 2000);
+        const successUrl = orderId 
+          ? '/payments/success?orderId=' + orderId
+          : '/payments/success?paymentIntentId=' + paymentIntentId;
+        setTimeout(() => window.location.href = successUrl, 2000);
       } else {
         showMessage('Payment status: ' + (result.paymentIntent && result.paymentIntent.status), 'warning');
       }

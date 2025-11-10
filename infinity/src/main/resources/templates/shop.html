@@ -137,43 +137,37 @@
         </div>
 
         <div class="row product-lists">
-            <div class="col-lg-4 col-md-6 text-center strawberry" th:each="artwork: ${artworks}" th:object="${artwork}" th:if="${artwork.category} == 'hatching' and ${artwork.label} == 'Unsold'">
+            <div class="col-lg-4 col-md-6 text-center strawberry mb-4" th:each="artwork: ${photos}" th:object="${artwork}" th:if="${artwork.category} == 'hatching' and ${artwork.label} == 'Unsold'">
                 <div class="single-product-item">
                     <div class="product-image">
-                        <a th:href="@{/shop/{id}(id=${artwork.getId()})}"><img th:src="*{getImgUrl()}" alt=""></a>
+                        <a th:href="@{/shop/{id}(id=${artwork.getId()})}"><img th:src="*{getImgUrl()}" alt="" style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px;"></a>
                     </div>
                     <h3 th:text="*{getTitle()}">Title</h3>
-                    <strong class="product-price" th:text="'Price ' + *{getPrice()} + ' $'"></strong><br>
-                    <strong>By </strong><strong class="product-price" th:text="${artAndOwner.get(artwork)}"></strong><br><br>
+                    <strong class="product-price" th:text="'$' + *{getPrice()}"></strong><br>
+                    <strong>By </strong><strong class="product-price" th:text="${photoAndOwner.get(artwork)}"></strong><br><br>
                     <a th:href="@{/shop/{id}(id=${artwork.getId()})}" class="cart-btn"><i class="fas fa-shopping-cart"></i> Buy the Art</a>
                 </div>
             </div>
-        </div>
-
-        <div class="row product-lists">
-            <div class="col-lg-4 col-md-6 text-center berry" th:each="artwork: ${artworks}" th:object="${artwork}" th:if="${artwork.category} == 'oilPainting' and ${artwork.label} == 'Unsold'">
+            <div class="col-lg-4 col-md-6 text-center berry mb-4" th:each="artwork: ${photos}" th:object="${artwork}" th:if="${artwork.category} == 'oilPainting' and ${artwork.label} == 'Unsold'">
                 <div class="single-product-item">
                     <div class="product-image">
-                        <a th:href="@{/shop/{id}(id=${artwork.getId()})}"><img th:src="*{getImgUrl()}" alt=""></a>
+                        <a th:href="@{/shop/{id}(id=${artwork.getId()})}"><img th:src="*{getImgUrl()}" alt="" style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px;"></a>
                     </div>
                     <h3 th:text="*{getTitle()}">Title</h3>
-                    <strong class="product-price" th:text="'Price ' + *{getPrice()} + ' $'"></strong><br>
-                    <strong>By </strong><strong class="product-price" th:text="${artAndOwner.get(artwork)}"></strong><br><br>
-                    <a th:href="@{/shop/{id}(id=${artwork.getId()})}" class="cart-btn"><i class="fas fa-shopping-cart"></i>Buy the Art</a>
+                    <strong class="product-price" th:text="'$' + *{getPrice()}"></strong><br>
+                    <strong>By </strong><strong class="product-price" th:text="${photoAndOwner.get(artwork)}"></strong><br><br>
+                    <a th:href="@{/shop/{id}(id=${artwork.getId()})}" class="cart-btn"><i class="fas fa-shopping-cart"></i> Buy the Art</a>
                 </div>
             </div>
-        </div>
-
-        <div class="row product-lists">
-            <div class="col-lg-4 col-md-6 text-center lemon" th:each="artwork: ${artworks}" th:object="${artwork}" th:if="${artwork.category} == 'watercolorPainting' and ${artwork.label} == 'Unsold'">
+            <div class="col-lg-4 col-md-6 text-center lemon mb-4" th:each="artwork: ${photos}" th:object="${artwork}" th:if="${artwork.category} == 'watercolorPainting' and ${artwork.label} == 'Unsold'">
                 <div class="single-product-item">
                     <div class="product-image">
-                        <a th:href="@{/shop/{id}(id=${artwork.getId()})}"><img th:src="*{getImgUrl()}" alt=""></a>
+                        <a th:href="@{/shop/{id}(id=${artwork.getId()})}"><img th:src="*{getImgUrl()}" alt="" style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px;"></a>
                     </div>
                     <h3 th:text="*{getTitle()}">Title</h3>
-                    <strong class="product-price" th:text="'Price ' + *{getPrice()} + ' $'"></strong><br>
-                    <strong>By </strong><strong class="product-price" th:text="${artAndOwner.get(artwork)}"></strong><br><br>
-                    <a th:href="@{/shop/{id}(id=${artwork.getId()})}" class="cart-btn"><i class="fas fa-shopping-cart"></i>Buy the Art</a>
+                    <strong class="product-price" th:text="'$' + *{getPrice()}"></strong><br>
+                    <strong>By </strong><strong class="product-price" th:text="${photoAndOwner.get(artwork)}"></strong><br><br>
+                    <a th:href="@{/shop/{id}(id=${artwork.getId()})}" class="cart-btn"><i class="fas fa-shopping-cart"></i> Buy the Art</a>
                 </div>
             </div>
         </div>

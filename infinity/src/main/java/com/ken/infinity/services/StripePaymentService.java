@@ -15,9 +15,27 @@ import org.springframework.stereotype.Service;
 public class StripePaymentService {
 
     public CreatePaymentResponse createPaymentIntent(CreatePaymentRequest req, String idempotencyKey) throws Exception {
-        PaymentIntentCreateParams params = PaymentIntentCreateParams.builder().setAmount(req.getAmount()).setCurrency(req.getCurrency()).addPaymentMethodType("card").setDescription("Payment for order " + req.getOrderId()).putMetadata("orderId", req.getOrderId()).build();
+        PaymentIntentCreateParams.Builder builder = PaymentIntentCreateParams.builder()
+                .setAmount(req.getAmount())
+                .setCurrency(req.getCurrency())
+                .addPaymentMethodType("card");
 
-        RequestOptions requestOptions = idempotencyKey != null && !idempotencyKey.isBlank() ? RequestOptions.builder().setIdempotencyKey(idempotencyKey).build() : RequestOptions.getDefault();
+        // Add metadata from request (can include orderId or photoId, email, address)
+        if (req.getOrderId() != null && !req.getOrderId().isBlank()) {
+            builder.putMetadata("orderId", req.getOrderId());
+            builder.setDescription("Payment for order " + req.getOrderId());
+        }
+        if (req.getMetadata() != null) {
+            req.getMetadata().forEach(builder::putMetadata);
+            if (req.getMetadata().containsKey("photoId")) {
+                builder.setDescription("Payment for photo " + req.getMetadata().get("photoId"));
+            }
+        }
+
+        PaymentIntentCreateParams params = builder.build();
+        RequestOptions requestOptions = idempotencyKey != null && !idempotencyKey.isBlank() 
+                ? RequestOptions.builder().setIdempotencyKey(idempotencyKey).build() 
+                : RequestOptions.getDefault();
         PaymentIntent intent = PaymentIntent.create(params, requestOptions);
         return new CreatePaymentResponse(intent.getId(), intent.getClientSecret());
     }
