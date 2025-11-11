@@ -133,13 +133,19 @@
     msgDiv.textContent = message;
     msgDiv.classList.remove('d-none');
 
-    // Also show toast
-    const toastEl = document.getElementById('paymentToast');
-    const toastBody = document.getElementById('toastMessage');
-    toastBody.textContent = message;
-    toastEl.className = `toast align-items-center text-white bg-${type} border-0`;
-    const toast = new bootstrap.Toast(toastEl, { autohide: true, delay: 5000 });
-    toast.show();
+    // Also show toast if Bootstrap is available
+    try {
+      if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
+        const toastEl = document.getElementById('paymentToast');
+        const toastBody = document.getElementById('toastMessage');
+        toastBody.textContent = message;
+        toastEl.className = `toast align-items-center text-white bg-${type} border-0`;
+        const toast = new bootstrap.Toast(toastEl, { autohide: true, delay: 5000 });
+        toast.show();
+      }
+    } catch (e) {
+      console.warn('Bootstrap Toast not available:', e);
+    }
   }
 </script>
 </body>

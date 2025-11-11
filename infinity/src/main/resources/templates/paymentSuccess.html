@@ -56,9 +56,15 @@
 <script>
     // Show toast on page load
     document.addEventListener('DOMContentLoaded', function () {
-        var toastEl = document.getElementById('successToast');
-        var toast = new bootstrap.Toast(toastEl, { autohide: true, delay: 5000 });
-        toast.show();
+        try {
+            if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
+                var toastEl = document.getElementById('successToast');
+                var toast = new bootstrap.Toast(toastEl, { autohide: true, delay: 5000 });
+                toast.show();
+            }
+        } catch (e) {
+            console.warn('Bootstrap Toast not available:', e);
+        }
     });
 </script>
 </body>
