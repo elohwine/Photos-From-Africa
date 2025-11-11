@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8" />
     <title>Payment Successful - Photos For Africa</title>
@@ -23,11 +23,18 @@
             <h5>Thank you for your payment</h5>
             <p>Your order has been processed successfully.</p>
 
-            <div class="order-summary bg-light p-3 rounded mb-4">
+            <div class="order-summary bg-light p-3 rounded mb-4" th:if="${orderId}">
                 <h6>Order Details</h6>
                 <p><strong>Order ID:</strong> <span th:text="${orderId}"></span></p>
                 <p><strong>Amount Paid:</strong> $<span th:text="${amount / 100}"></span> (<span th:text="${currency}"></span>)</p>
                 <p><strong>Status:</strong> <span class="badge bg-success">Paid</span></p>
+            </div>
+
+            <div class="order-summary bg-light p-3 rounded mb-4" th:if="${paymentIntentId}">
+                <h6>Payment Details</h6>
+                <p><strong>Payment ID:</strong> <span th:text="${paymentIntentId}"></span></p>
+                <p><strong>Status:</strong> <span class="badge bg-success">Paid</span></p>
+                <p th:if="${message}"><span th:text="${message}"></span></p>
             </div>
 
             <div class="alert alert-info" role="alert">
@@ -35,7 +42,8 @@
             </div>
 
             <a href="/homepage" class="btn btn-primary">Continue Shopping</a>
-            <a href="/userProfile" class="btn btn-outline-secondary ms-2">View Profile</a>
+            <a href="/userProfile" class="btn btn-outline-secondary ms-2" sec:authorize="isAuthenticated()">View Profile</a>
+            <a href="/shop" class="btn btn-outline-secondary ms-2" sec:authorize="isAnonymous()">View Gallery</a>
         </div>
     </div>
 </div>

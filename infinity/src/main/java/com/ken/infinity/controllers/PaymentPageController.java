@@ -86,9 +86,12 @@ public class PaymentPageController {
 
     @GetMapping("/payments/success")
     public String paymentSuccess(@RequestParam(value = "orderId", required = false) Integer orderId, @RequestParam(value = "paymentIntentId", required = false) String paymentIntentId, Model model) {
+        System.out.println("[DEBUG] /payments/success called with orderId=" + orderId + ", paymentIntentId=" + paymentIntentId);
+        
         if (orderId != null) {
             Order order = orderRepository.findById(orderId).orElse(null);
             if (order == null) {
+                System.out.println("[ERROR] Order not found for orderId=" + orderId);
                 model.addAttribute("error", "Order not found");
                 return "error";
             }
@@ -96,11 +99,14 @@ public class PaymentPageController {
             model.addAttribute("orderId", order.getId());
             model.addAttribute("amount", amountInCents);
             model.addAttribute("currency", "usd");
+            System.out.println("[SUCCESS] Showing payment success page for order " + orderId);
         } else if (paymentIntentId != null) {
             // Guest checkout: show generic success
             model.addAttribute("paymentIntentId", paymentIntentId);
             model.addAttribute("message", "Thank you for your purchase!");
+            System.out.println("[SUCCESS] Showing guest payment success for paymentIntent=" + paymentIntentId);
         } else {
+            System.out.println("[ERROR] No orderId or paymentIntentId provided");
             model.addAttribute("error", "Invalid payment reference");
             return "error";
         }
