@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
   <title>Pay with Card - Photos For Africa</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="https://js.stripe.com/v3/"></script>
+  <script src="https://js.stripe.com/v3/"></script>
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/css/main.css" />
     <style>
@@ -63,18 +63,21 @@
 </div>
 
 <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script>
+<script th:inline="javascript">
+  // Publishable key from server
+  window.STRIPE_PUBLISHABLE_KEY = /*[[${stripePk}]]*/ 'pk_test_placeholder';
   const stripe = Stripe(window.STRIPE_PUBLISHABLE_KEY || 'pk_test_placeholder');
   const elements = stripe.elements();
   const card = elements.create('card', { style: { base: { fontSize: '16px' } } });
   card.mount('#card-element');
 
+  // Thymeleaf inlining will replace these with JS literals at render time
   const amount = /*[[${amount}]]*/ 0;
-  const currency = '/*[[${currency}]]*/'.replaceAll('\u0027','');
-  const orderId = /*[[${orderId}]]*/ 0;
-  const photoId = /*[[${photoId}]]*/ 0;
-  const email = '/*[[${email}]]*/'.replaceAll('\u0027','');
-  const address = '/*[[${address}]]*/'.replaceAll('\u0027','');
+  const currency = /*[[${currency}]]*/ 'usd';
+  const orderId = /*[[${orderId}]]*/ null;
+  const photoId = /*[[${photoId}]]*/ null;
+  const email = /*[[${email}]]*/ null;
+  const address = /*[[${address}]]*/ null;
   const payBtn = document.getElementById('payBtn');
   const msgDiv = document.getElementById('msg');
   const spinner = payBtn.querySelector('.spinner-border');

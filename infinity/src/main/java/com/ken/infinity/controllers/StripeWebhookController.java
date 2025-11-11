@@ -42,7 +42,7 @@ public class StripeWebhookController {
             if (maybeObj.isPresent() && maybeObj.get() instanceof PaymentIntent) {
                 PaymentIntent pi = (PaymentIntent) maybeObj.get();
                 Map<String, String> metadata = pi.getMetadata();
-                
+
                 String orderIdStr = metadata != null ? metadata.get("orderId") : null;
                 String photoIdStr = metadata != null ? metadata.get("photoId") : null;
 
@@ -117,14 +117,7 @@ public class StripeWebhookController {
             message.setFrom(from);
             message.setTo(toEmail);
             message.setSubject("Payment Confirmation - Photos For Africa");
-            message.setText("Dear Customer,\n\n" +
-                    "Your payment has been successfully processed!\n" +
-                    "Order ID: " + order.getId() + "\n" +
-                    "Amount Paid: $" + order.getPrice() + "\n" +
-                    "Payment ID: " + order.getExternalPaymentId() + "\n\n" +
-                    "Your photo will be delivered to: " + order.getAddress() + "\n\n" +
-                    "Thank you for choosing Photos For Africa!\n\n" +
-                    "Best regards,\nPhotos For Africa");
+            message.setText("Dear Customer,\n\n" + "Your payment has been successfully processed!\n" + "Order ID: " + order.getId() + "\n" + "Amount Paid: $" + order.getPrice() + "\n" + "Payment ID: " + order.getExternalPaymentId() + "\n\n" + "Your photo will be delivered to: " + order.getAddress() + "\n\n" + "Thank you for choosing Photos For Africa!\n\n" + "Best regards,\nPhotos For Africa");
             javaMailSender.send(message);
         } catch (Exception e) {
             System.err.println("Failed to send guest confirmation email: " + e.getMessage());

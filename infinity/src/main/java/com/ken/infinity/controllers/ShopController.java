@@ -146,9 +146,9 @@ public class ShopController {
     public String PhotoById(Model model, @PathVariable("photoId") int photoId) {
         // Expose login state for template conditional rendering (not required to view)
         model.addAttribute("loggedIn", securityService.isLoggedIn());
-    Map<String, Object> map = new HashMap<String, Object>();
-    // Provide an Order model attribute for the order form binding
-    model.addAttribute("order", new Order());
+        Map<String, Object> map = new HashMap<String, Object>();
+        // Provide an Order model attribute for the order form binding
+        model.addAttribute("order", new Order());
 
         Photo photo = photoService.findPhotoById(photoId);
         if (photo == null) {
@@ -156,7 +156,7 @@ public class ShopController {
             return "error";
         }
 
-    // Template expects attribute name "artwork"
+        // Template expects attribute name "artwork"
         map.put("artwork", photo);
         model.addAttribute("owner", photoService.getPhotoOwnerName(photo));
         model.addAllAttributes(map);

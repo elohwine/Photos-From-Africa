@@ -26,11 +26,7 @@ public class PaymentPageController {
      * We display the Stripe payment form without creating an order yet.
      */
     @GetMapping("/payments/checkout")
-    public String checkoutGuest(
-            @RequestParam("photoId") int photoId,
-            @RequestParam("email") String email,
-            @RequestParam("address") String address,
-            Model model) {
+    public String checkoutGuest(@RequestParam("photoId") int photoId, @RequestParam("email") String email, @RequestParam("address") String address, Model model) {
         Photo photo = photoService.findPhotoById(photoId);
         if (photo == null) {
             model.addAttribute("error", "Photo not found");
@@ -43,6 +39,7 @@ public class PaymentPageController {
         model.addAttribute("address", address);
         model.addAttribute("amount", amountInCents);
         model.addAttribute("currency", "usd");
+        model.addAttribute("stripePk", System.getenv("STRIPE_PUBLISHABLE_KEY"));
         return "stripePay";
     }
 
@@ -60,14 +57,12 @@ public class PaymentPageController {
         model.addAttribute("orderId", order.getId());
         model.addAttribute("amount", amountInCents);
         model.addAttribute("currency", "usd");
+        model.addAttribute("stripePk", System.getenv("STRIPE_PUBLISHABLE_KEY"));
         return "stripePay";
     }
 
     @GetMapping("/payments/success")
-    public String paymentSuccess(
-            @RequestParam(value = "orderId", required = false) Integer orderId,
-            @RequestParam(value = "paymentIntentId", required = false) String paymentIntentId,
-            Model model) {
+    public String paymentSuccess(@RequestParam(value = "orderId", required = false) Integer orderId, @RequestParam(value = "paymentIntentId", required = false) String paymentIntentId, Model model) {
         if (orderId != null) {
             Order order = orderRepository.findById(orderId).orElse(null);
             if (order == null) {

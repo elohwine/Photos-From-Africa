@@ -52,6 +52,19 @@
 			<groupId>com.stripe</groupId>
 			<artifactId>stripe-java</artifactId>
 			<version>24.10.0</version>
+			<exclusions>
+				<!-- Exclude transitive gson to avoid version conflicts -->
+				<exclusion>
+					<groupId>com.google.code.gson</groupId>
+					<artifactId>gson</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- Explicit Gson 2.10.1 providing ReflectionAccessFilter (required by stripe-java 24.x) -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.10.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
