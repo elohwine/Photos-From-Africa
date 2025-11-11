@@ -2,8 +2,11 @@ package com.ken.infinity.controllers;
 
 import com.ken.infinity.models.Order;
 import com.ken.infinity.models.Photo;
+import com.ken.infinity.models.User;
 import com.ken.infinity.repository.OrderRepository;
 import com.ken.infinity.services.PhotoService;
+import com.ken.infinity.services.SecurityService;
+import com.ken.infinity.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,15 +17,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class PaymentPageController {
     private final OrderRepository orderRepository;
     private final PhotoService photoService;
+    private final SecurityService securityService;
+    private final UserService userService;
 
     @Autowired
-    public PaymentPageController(OrderRepository orderRepository, PhotoService photoService) {
+    public PaymentPageController(OrderRepository orderRepository, PhotoService photoService, SecurityService securityService, UserService userService) {
         this.orderRepository = orderRepository;
         this.photoService = photoService;
+        this.securityService = securityService;
+        this.userService = userService;
     }
 
     /**
-     * Direct checkout: guest user provides email, address, and photo ID.
+     * Direct checkout: handles both logged-in users and guests.
+     * - If user is logged in, we can associate with their account
+     * - If guest, we proceed with email/address from form
      * We display the Stripe payment form without creating an order yet.
      */
     @GetMapping("/payments/checkout")
@@ -32,6 +41,14 @@ public class PaymentPageController {
             model.addAttribute("error", "Photo not found");
             return "error";
         }
+        
+        // Check if user is logged in
+        String username = securityService.findLoggedInUsername();
+        User loggedInUser = null;
+        if (username != null) {
+            loggedInUser = userService.findByUsername(username);
+        }
+        
         long amountInCents = ((long) photo.getPrice()) * 100L;
         model.addAttribute("photoId", photo.getId());
         model.addAttribute("photoTitle", photo.getTitle());
@@ -40,6 +57,12 @@ public class PaymentPageController {
         model.addAttribute("amount", amountInCents);
         model.addAttribute("currency", "usd");
         model.addAttribute("stripePk", System.getenv("STRIPE_PUBLISHABLE_KEY"));
+        
+        // Pass userId if logged in (for webhook to associate order properly)
+        if (loggedInUser != null) {
+            model.addAttribute("userId", loggedInUser.getId());
+        }
+        
         return "stripePay";
     }
 

@@ -1,8 +1,11 @@
 package com.ken.infinity.controllers;
 
 import com.ken.infinity.models.Order;
+import com.ken.infinity.models.Photo;
 import com.ken.infinity.models.User;
 import com.ken.infinity.repository.OrderRepository;
+import com.ken.infinity.repository.UserRepository;
+import com.ken.infinity.services.PhotoService;
 import com.stripe.model.Event;
 import com.stripe.model.PaymentIntent;
 import com.stripe.net.Webhook;
@@ -20,11 +23,15 @@ import org.springframework.web.bind.annotation.*;
 public class StripeWebhookController {
     private final OrderRepository orderRepository;
     private final JavaMailSender javaMailSender;
+    private final UserRepository userRepository;
+    private final PhotoService photoService;
 
     @Autowired
-    public StripeWebhookController(OrderRepository orderRepository, JavaMailSender javaMailSender) {
+    public StripeWebhookController(OrderRepository orderRepository, JavaMailSender javaMailSender, UserRepository userRepository, PhotoService photoService) {
         this.orderRepository = orderRepository;
         this.javaMailSender = javaMailSender;
+        this.userRepository = userRepository;
+        this.photoService = photoService;
     }
 
     @PostMapping("/stripe")
@@ -86,8 +93,26 @@ public class StripeWebhookController {
             Integer photoId = Integer.parseInt(metadata.get("photoId"));
             String email = metadata.get("email");
             String address = metadata.get("address");
+            String userIdStr = metadata.get("userId");
             Long amountCents = pi.getAmount();
             int priceUsd = (int) (amountCents / 100);
+
+            // Find photo and user if applicable
+            Photo photo = photoService.findPhotoById(photoId);
+            User user = null;
+            
+            // Priority 1: userId from metadata (logged-in user at checkout)
+            if (userIdStr != null && !userIdStr.isEmpty()) {
+                try {
+                    Integer userId = Integer.parseInt(userIdStr);
+                    user = userRepository.findById(userId).orElse(null);
+                } catch (NumberFormatException ignored) {}
+            }
+            
+            // Priority 2: Check if email belongs to existing user
+            if (user == null && email != null && !email.isEmpty()) {
+                user = userRepository.findByEmail(email);
+            }
 
             // Create order record
             Order order = new Order();
@@ -99,18 +124,38 @@ public class StripeWebhookController {
             order.setPaymentProvider("stripe");
             order.setExternalPaymentId(pi.getId());
             order.setPaymentStatus("SUCCEEDED");
-            // user is null for guest checkout
-            // photo association can be added if needed via photoService
+            
+            // Associate with user if found
+            if (user != null) {
+                order.setUser(user);
+            }
+            
+            // Associate with photo if found
+            if (photo != null) {
+                order.setPhoto(photo);
+                // Update photo status to sold
+                photoService.updatePhoto(photoId);
+            }
+            
             orderRepository.save(order);
 
             // Send confirmation email
-            sendGuestConfirmationEmail(order, email);
+            if (user != null) {
+                sendPaymentConfirmationEmail(order);
+            } else {
+                sendGuestConfirmationEmail(order, email);
+            }
         } catch (Exception e) {
             System.err.println("Error handling guest checkout: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
     private void sendGuestConfirmationEmail(Order order, String toEmail) {
+        if (toEmail == null || toEmail.isEmpty()) {
+            System.err.println("Cannot send email: recipient email is null or empty");
+            return;
+        }
         try {
             String from = "nairobi.sen.42@gmail.com";
             SimpleMailMessage message = new SimpleMailMessage();
@@ -126,7 +171,7 @@ public class StripeWebhookController {
 
     private void sendPaymentConfirmationEmail(Order order) {
         User user = order.getUser();
-        if (user != null && user.getEmail() != null) {
+        if (user != null && user.getEmail() != null && !user.getEmail().isEmpty()) {
             String from = "nairobi.sen.42@gmail.com";
             String to = user.getEmail();
 
@@ -134,7 +179,8 @@ public class StripeWebhookController {
             message.setFrom(from);
             message.setTo(to);
             message.setSubject("Payment Confirmation - Photos For Africa");
-            message.setText("Dear " + user.getFirstName() + ",\n\n" + "Your payment for Order #" + order.getId() + " has been successfully processed.\n" + "Amount Paid: $" + order.getPrice() + "\n" + "Payment ID: " + order.getExternalPaymentId() + "\n\n" + "Your photos will be delivered shortly. Thank you for choosing Photos For Africa!\n\n" + "Best regards,\nPhotos For Africa");
+            String firstName = (user.getFirstName() != null && !user.getFirstName().isEmpty()) ? user.getFirstName() : "Customer";
+            message.setText("Dear " + firstName + ",\n\n" + "Your payment for Order #" + order.getId() + " has been successfully processed.\n" + "Amount Paid: $" + order.getPrice() + "\n" + "Payment ID: " + order.getExternalPaymentId() + "\n\n" + "Your photos will be delivered shortly. Thank you for choosing Photos For Africa!\n\n" + "Best regards,\nPhotos For Africa");
 
             javaMailSender.send(message);
         }

@@ -164,11 +164,18 @@
     <div class="form-div"  >
 
       <h2>Purchase This Photo</h2>
+      
+      <div sec:authorize="isAuthenticated()" class="alert alert-info">
+        <i class="fas fa-user-check"></i> You're logged in as <strong sec:authentication="name"></strong>
+      </div>
 
       <form class="form-signin" method="GET" th:action="@{/payments/checkout}">
         <b> <label>Your Email: </label> </b>
         <br>
-        <input class="form-control" name="email" type="email" placeholder="your@email.com" required>
+        <input class="form-control" name="email" type="email" placeholder="your@email.com" 
+               th:value="${#authentication.principal.username}" sec:authorize="isAuthenticated()" required>
+        <input class="form-control" name="email" type="email" placeholder="your@email.com" 
+               sec:authorize="!isAuthenticated()" required>
         <br>
         <b> <label>Delivery Address: </label> </b>
         <input class="form-control" type="text" name="address" placeholder="Address where photo needs to be delivered" required>

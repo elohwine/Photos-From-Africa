@@ -78,6 +78,7 @@
   const photoId = /*[[${photoId}]]*/ null;
   const email = /*[[${email}]]*/ null;
   const address = /*[[${address}]]*/ null;
+  const userId = /*[[${userId}]]*/ null;
   const payBtn = document.getElementById('payBtn');
   const msgDiv = document.getElementById('msg');
   const spinner = payBtn.querySelector('.spinner-border');
@@ -92,7 +93,9 @@
   });
 
   async function createPaymentIntent() {
-    const metadata = orderId ? { orderId: String(orderId) } : { photoId: String(photoId), email, address };
+    const metadata = orderId 
+      ? { orderId: String(orderId) } 
+      : { photoId: String(photoId), email, address, ...(userId && { userId: String(userId) }) };
     const resp = await fetch('/api/payments/create-payment-intent', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
