@@ -1,0 +1,30 @@
+name: Deploy to Fly
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install flyctl
+        uses: superfly/flyctl-actions@v2
+        with:
+          version: 'latest'
+
+      - name: Deploy to Fly (remote build)
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
+          STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          UPLOAD_BASE_DIR: ${{ secrets.UPLOAD_BASE_DIR }}
+        run: |
+          flyctl version
+          flyctl deploy --remote-only --config ./fly.toml

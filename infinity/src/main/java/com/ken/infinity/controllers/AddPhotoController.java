@@ -1,10 +1,10 @@
 package com.ken.infinity.controllers;
 
+import com.ken.infinity.configurations.UploadProperties;
 import com.ken.infinity.models.Photo;
 import com.ken.infinity.models.User;
 import com.ken.infinity.repository.UserRepository;
 import com.ken.infinity.services.PhotoService;
-import com.ken.infinity.configurations.UploadProperties;
 import com.ken.infinity.services.SecurityService;
 import com.ken.infinity.services.UserService;
 import java.io.IOException;

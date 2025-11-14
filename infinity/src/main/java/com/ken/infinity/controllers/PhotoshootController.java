@@ -1,5 +1,6 @@
 package com.ken.infinity.controllers;
 
+import com.ken.infinity.configurations.UploadProperties;
 import com.ken.infinity.models.*;
 import com.ken.infinity.services.PhotoshootRegisterService;
 import com.ken.infinity.services.PhotoshootService;
@@ -16,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.ken.infinity.configurations.UploadProperties;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;

@@ -41,14 +41,14 @@ public class PaymentPageController {
             model.addAttribute("error", "Photo not found");
             return "error";
         }
-        
+
         // Check if user is logged in
         String username = securityService.findLoggedInUsername();
         User loggedInUser = null;
         if (username != null) {
             loggedInUser = userService.findByUsername(username);
         }
-        
+
         long amountInCents = ((long) photo.getPrice()) * 100L;
         model.addAttribute("photoId", photo.getId());
         model.addAttribute("photoTitle", photo.getTitle());
@@ -57,12 +57,12 @@ public class PaymentPageController {
         model.addAttribute("amount", amountInCents);
         model.addAttribute("currency", "usd");
         model.addAttribute("stripePk", System.getenv("STRIPE_PUBLISHABLE_KEY"));
-        
+
         // Pass userId if logged in (for webhook to associate order properly)
         if (loggedInUser != null) {
             model.addAttribute("userId", loggedInUser.getId());
         }
-        
+
         return "stripePay";
     }
 
@@ -87,7 +87,7 @@ public class PaymentPageController {
     @GetMapping("/payments/success")
     public String paymentSuccess(@RequestParam(value = "orderId", required = false) Integer orderId, @RequestParam(value = "paymentIntentId", required = false) String paymentIntentId, Model model) {
         System.out.println("[DEBUG] /payments/success called with orderId=" + orderId + ", paymentIntentId=" + paymentIntentId);
-        
+
         if (orderId != null) {
             Order order = orderRepository.findById(orderId).orElse(null);
             if (order == null) {

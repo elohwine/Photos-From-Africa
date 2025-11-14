@@ -100,7 +100,7 @@ public class StripeWebhookController {
             // Find photo and user if applicable
             Photo photo = photoService.findPhotoById(photoId);
             User user = null;
-            
+
             // Priority 1: userId from metadata (logged-in user at checkout)
             if (userIdStr != null && !userIdStr.isEmpty()) {
                 try {
@@ -108,7 +108,7 @@ public class StripeWebhookController {
                     user = userRepository.findById(userId).orElse(null);
                 } catch (NumberFormatException ignored) {}
             }
-            
+
             // Priority 2: Check if email belongs to existing user
             if (user == null && email != null && !email.isEmpty()) {
                 user = userRepository.findByEmail(email);
@@ -124,19 +124,19 @@ public class StripeWebhookController {
             order.setPaymentProvider("stripe");
             order.setExternalPaymentId(pi.getId());
             order.setPaymentStatus("SUCCEEDED");
-            
+
             // Associate with user if found
             if (user != null) {
                 order.setUser(user);
             }
-            
+
             // Associate with photo if found
             if (photo != null) {
                 order.setPhoto(photo);
                 // Update photo status to sold
                 photoService.updatePhoto(photoId);
             }
-            
+
             orderRepository.save(order);
 
             // Send confirmation email
