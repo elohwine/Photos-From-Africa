@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.ken.infinity.configurations.UploadProperties;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
@@ -33,13 +34,15 @@ public class PhotoshootController {
     SecurityService securityService;
     UserService userService;
     PhotoshootRegisterService photoshootRegisterService;
+    private final UploadProperties uploadProperties;
 
     @Autowired
-    public PhotoshootController(PhotoshootService photoshootService, SecurityService securityService, UserService userService, PhotoshootRegisterService photoshootRegisterService) {
+    public PhotoshootController(PhotoshootService photoshootService, SecurityService securityService, UserService userService, PhotoshootRegisterService photoshootRegisterService, UploadProperties uploadProperties) {
         this.photoshootService = photoshootService;
         this.securityService = securityService;
         this.userService = userService;
         this.photoshootRegisterService = photoshootRegisterService;
+        this.uploadProperties = uploadProperties;
     }
 
     @GetMapping("/photoshoot")
@@ -80,7 +83,8 @@ public class PhotoshootController {
 
         photoshootService.save(photoshoot);
 
-        String uploadDir = "src/main/resources/static/img/photoshoot-photos/" + photoshoot.getId();
+        String base = uploadProperties.getBaseDir();
+        String uploadDir = base + "/img/photoshoot-photos/" + photoshoot.getId();
 
         PhotoshootController.FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
 

@@ -4,6 +4,7 @@ import com.ken.infinity.models.Photo;
 import com.ken.infinity.models.User;
 import com.ken.infinity.repository.UserRepository;
 import com.ken.infinity.services.PhotoService;
+import com.ken.infinity.configurations.UploadProperties;
 import com.ken.infinity.services.SecurityService;
 import com.ken.infinity.services.UserService;
 import java.io.IOException;
@@ -28,10 +29,13 @@ public class AddPhotoController {
     public SecurityService securityService;
 
     @Autowired
-    public AddPhotoController(PhotoService photoService, UserService userService, SecurityService securityService) {
+    private final UploadProperties uploadProperties;
+
+    public AddPhotoController(PhotoService photoService, UserService userService, SecurityService securityService, UploadProperties uploadProperties) {
         this.photoService = photoService;
         this.userService = userService;
         this.securityService = securityService;
+        this.uploadProperties = uploadProperties;
     }
 
     @GetMapping("/addArt")
@@ -63,7 +67,8 @@ public class AddPhotoController {
         photo.setImgUrl(fileName);
         photoService.save(photo, user);
 
-        String uploadDir = "src/main/resources/static/img/artwork-photos/" + photo.getId();
+        String base = uploadProperties.getBaseDir();
+        String uploadDir = base + "/img/artwork-photos/" + photo.getId();
 
         FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
 

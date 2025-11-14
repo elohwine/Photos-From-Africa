@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.ken.infinity.configurations.UploadProperties;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
@@ -31,16 +32,18 @@ public class WorkshopController {
     UserService userService;
     WorkshopService workshopService;
     WorkshopRegisterService workshopRegisterService;
+    private final UploadProperties uploadProperties;
 
     @Autowired
     private JavaMailSender javaMailSender;
 
     @Autowired
-    public WorkshopController(SecurityService securityService, UserService userService, WorkshopService workshopService, WorkshopRegisterService workshopRegisterService) {
+    public WorkshopController(SecurityService securityService, UserService userService, WorkshopService workshopService, WorkshopRegisterService workshopRegisterService, UploadProperties uploadProperties) {
         this.securityService = securityService;
         this.userService = userService;
         this.workshopService = workshopService;
         this.workshopRegisterService = workshopRegisterService;
+        this.uploadProperties = uploadProperties;
     }
 
     @GetMapping("/workshop")
@@ -91,7 +94,8 @@ public class WorkshopController {
 
         workshopService.save(workshop, user);
 
-        String uploadDir = "src/main/resources/static/img/workshop-photos/" + workshop.getId();
+        String base = uploadProperties.getBaseDir();
+        String uploadDir = base + "/img/workshop-photos/" + workshop.getId();
 
         WorkshopController.FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
 
