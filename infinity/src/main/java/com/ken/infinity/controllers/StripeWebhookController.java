@@ -118,7 +118,7 @@ public class StripeWebhookController {
             Order order = new Order();
             order.setEmail(email);
             order.setAddress(address);
-            order.setPrice(priceUsd);
+            order.setPrice(java.math.BigDecimal.valueOf(priceUsd));
             order.setStatus("Paid");
             order.setOrdered_at(new java.sql.Timestamp(System.currentTimeMillis()));
             order.setPaymentProvider("stripe");

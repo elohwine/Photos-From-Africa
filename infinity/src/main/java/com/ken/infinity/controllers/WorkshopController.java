@@ -82,7 +82,6 @@ public class WorkshopController {
         User user = userService.findByUserId(currentUserId);
         String originalName = multipartFile.getOriginalFilename();
         String fileName = StringUtils.cleanPath(originalName != null ? originalName : ("workshop-" + System.currentTimeMillis()));
-        workshop.setImgUrl(fileName);
 
         System.out.println("Current datetime " + localDatetime);
         String datetimeTimestamp = localDatetime;
@@ -92,6 +91,11 @@ public class WorkshopController {
 
         workshop.setDatetime(Timestamp.valueOf(datetimeTimestamp.replace("T", " ")));
 
+        workshopService.save(workshop, user);
+
+        // Set the full URL path for the image
+        String imgUrl = "/img/workshop-photos/" + workshop.getId() + "/" + fileName;
+        workshop.setImgUrl(imgUrl);
         workshopService.save(workshop, user);
 
         String base = uploadProperties.getBaseDir();

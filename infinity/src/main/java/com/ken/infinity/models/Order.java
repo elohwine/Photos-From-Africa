@@ -1,5 +1,6 @@
 package com.ken.infinity.models;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import javax.persistence.*;
 
@@ -11,7 +12,7 @@ public class Order {
     private int id;
 
     private String email;
-    private int price;
+    private BigDecimal price;
     private String address;
     private String status;
     private Timestamp ordered_at;
@@ -31,7 +32,7 @@ public class Order {
 
     public Order() {}
 
-    public Order(int id, String email, int price, String address, String status, Timestamp ordered_at, User user, Photo photo) {
+    public Order(int id, String email, BigDecimal price, String address, String status, Timestamp ordered_at, User user, Photo photo) {
         this.id = id;
         this.email = email;
         this.price = price;
@@ -58,11 +59,11 @@ public class Order {
         this.email = email;
     }
 
-    public int getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

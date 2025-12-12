@@ -21,5 +21,5 @@ RUN ./mvnw clean package -DskipTests
 # Expose port 8080
 EXPOSE 8080
 
-# Run the application
-CMD ["java", "-jar", "target/infinity-0.0.1-SNAPSHOT.jar"]
+# Run the application with server address binding
+CMD ["java", "-Dserver.address=0.0.0.0", "-Dserver.port=8080", "-jar", "target/infinity-0.0.1-SNAPSHOT.jar"]

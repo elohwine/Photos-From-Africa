@@ -33,7 +33,10 @@ public class StripePaymentService {
                 int photoId = Integer.parseInt(md.get("photoId"));
                 Photo p = photoService.findPhotoById(photoId);
                 if (p != null) {
-                    amount = (long) p.getPrice() * 100L; // cents
+                    java.math.BigDecimal price = p.getPrice();
+                    if (price != null) {
+                        amount = price.multiply(java.math.BigDecimal.valueOf(100)).setScale(0, java.math.RoundingMode.HALF_UP).longValueExact(); // cents
+                    }
                     // Default all payments to USD for now
                     currency = (currency == null || currency.isBlank()) ? "usd" : currency;
                 }

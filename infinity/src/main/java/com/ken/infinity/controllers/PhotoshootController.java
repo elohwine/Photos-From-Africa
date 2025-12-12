@@ -71,7 +71,6 @@ public class PhotoshootController {
 
         String originalName = multipartFile.getOriginalFilename();
         String fileName = StringUtils.cleanPath(originalName != null ? originalName : ("photoshoot-" + System.currentTimeMillis()));
-        photoshoot.setImgUrl(fileName);
 
         System.out.println("Current datetime " + localDatetime);
         String datetimeTimestamp = localDatetime;
@@ -81,6 +80,11 @@ public class PhotoshootController {
 
         photoshoot.setDatetime(Timestamp.valueOf(datetimeTimestamp.replace("T", " ")));
 
+        photoshootService.save(photoshoot);
+
+        // Set the full URL path for the image
+        String imgUrl = "/img/photoshoot-photos/" + photoshoot.getId() + "/" + fileName;
+        photoshoot.setImgUrl(imgUrl);
         photoshootService.save(photoshoot);
 
         String base = uploadProperties.getBaseDir();

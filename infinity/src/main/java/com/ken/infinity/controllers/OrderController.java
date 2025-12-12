@@ -59,7 +59,7 @@ public class OrderController {
             System.out.println("Photo not found for id=" + photo_id);
             return "redirect:/shop?error=photo_not_found";
         }
-        int price = photo.getPrice();
+        java.math.BigDecimal price = photo.getPrice();
         order.setPrice(price);
         System.out.println(price);
         Date date = new Date();

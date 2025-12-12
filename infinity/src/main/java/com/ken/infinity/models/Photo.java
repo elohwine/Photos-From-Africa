@@ -1,5 +1,6 @@
 package com.ken.infinity.models;
 
+import java.math.BigDecimal;
 import java.util.List;
 import javax.persistence.*;
 
@@ -14,7 +15,7 @@ public class Photo {
     private String description;
     private String category;
     private String label;
-    private int price;
+    private BigDecimal price;
     private int likes;
     private String imgUrl;
 
@@ -26,7 +27,7 @@ public class Photo {
 
     public Photo() {}
 
-    public Photo(int id, String title, String description, String category, String label, int price, int likes, String imgUrl, User owner) {
+    public Photo(int id, String title, String description, String category, String label, BigDecimal price, int likes, String imgUrl, User owner) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -86,11 +87,11 @@ public class Photo {
         this.label = label;
     }
 
-    public int getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

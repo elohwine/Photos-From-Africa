@@ -26,11 +26,7 @@ public class PhotoServiceImpl implements PhotoService {
         // Auto-approval bypass: new uploads immediately available for sale
         // Previously: photo.setLabel("Verifying"); requiring admin acceptance
         photo.setLabel("Unsold");
-        // First save to obtain an ID
-        Photo saved = photoRepository.save(photo);
-        String finalImgUrl = "/img/artwork-photos/" + saved.getId() + "/" + saved.getImgUrl();
-        saved.setImgUrl(finalImgUrl);
-        photoRepository.save(saved);
+        photoRepository.save(photo);
     }
 
     @Override

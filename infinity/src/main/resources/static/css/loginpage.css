@@ -9,7 +9,29 @@ body {
     align-items: center;
     /* padding-top: 40px; */
     /* padding-bottom: 40px; */
-    background-color: #f5f5f5;
+    background-color: var(--pfa-bg);
+    color: var(--pfa-text);
+}
+
+a {
+    color: var(--pfa-accent-2);
+}
+
+a:hover,
+a:focus {
+    color: var(--pfa-accent);
+}
+
+/* Match Bootstrap's btn-dark usage to brand palette */
+.btn.btn-dark {
+    background-color: var(--pfa-ink);
+    border-color: var(--pfa-ink);
+}
+
+.btn.btn-dark:hover,
+.btn.btn-dark:focus {
+    background-color: var(--pfa-accent-2);
+    border-color: var(--pfa-accent-2);
 }
 
 .form-div{

@@ -49,7 +49,8 @@ public class PaymentPageController {
             loggedInUser = userService.findByUsername(username);
         }
 
-        long amountInCents = ((long) photo.getPrice()) * 100L;
+        java.math.BigDecimal bd = photo.getPrice();
+        long amountInCents = bd == null ? 0L : bd.multiply(java.math.BigDecimal.valueOf(100)).setScale(0, java.math.RoundingMode.HALF_UP).longValue();
         model.addAttribute("photoId", photo.getId());
         model.addAttribute("photoTitle", photo.getTitle());
         model.addAttribute("email", email);
@@ -76,7 +77,8 @@ public class PaymentPageController {
             model.addAttribute("error", "Order not found");
             return "error";
         }
-        long amountInCents = ((long) order.getPrice()) * 100L;
+        java.math.BigDecimal bd2 = order.getPrice();
+        long amountInCents = bd2 == null ? 0L : bd2.multiply(java.math.BigDecimal.valueOf(100)).setScale(0, java.math.RoundingMode.HALF_UP).longValue();
         model.addAttribute("orderId", order.getId());
         model.addAttribute("amount", amountInCents);
         model.addAttribute("currency", "usd");
@@ -95,7 +97,8 @@ public class PaymentPageController {
                 model.addAttribute("error", "Order not found");
                 return "error";
             }
-            long amountInCents = ((long) order.getPrice()) * 100L;
+            java.math.BigDecimal bd3 = order.getPrice();
+            long amountInCents = bd3 == null ? 0L : bd3.multiply(java.math.BigDecimal.valueOf(100)).setScale(0, java.math.RoundingMode.HALF_UP).longValue();
             model.addAttribute("orderId", order.getId());
             model.addAttribute("amount", amountInCents);
             model.addAttribute("currency", "usd");

@@ -64,7 +64,13 @@ public class AddPhotoController {
         System.out.println("current user id" + currentUserId);
         String originalName = multipartFile.getOriginalFilename();
         String fileName = StringUtils.cleanPath(originalName != null ? originalName : ("upload-" + System.currentTimeMillis()));
-        photo.setImgUrl(fileName);
+
+        // Save photo first to get the ID
+        photoService.save(photo, user);
+
+        // Set the full URL path for the image
+        String imgUrl = "/img/artwork-photos/" + photo.getId() + "/" + fileName;
+        photo.setImgUrl(imgUrl);
         photoService.save(photo, user);
 
         String base = uploadProperties.getBaseDir();
